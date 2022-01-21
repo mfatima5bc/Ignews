@@ -5,9 +5,15 @@ import { stripe } from '../services/stripe';
 
 import styles from './home.module.scss';
 
-// client-side
-// server-side
-// static-Site generation
+// client-side - (informações que não precisam de indexação, ou que pode ser 
+// gerada a partir de uma ação do usuário)
+// server-side - (quando precisar de indexação e conteúdos dinâmicos)
+// static-Site generation - (quando houver conteúdos que podem ser iguais para 
+// todo mundo e precisa de indexação ex: pag. de produto em um e-commerce)
+
+// ex: post no blog
+// conteúdo (SSG)
+// comentários (client-side)
 
 interface HomeProps {
   product: {
