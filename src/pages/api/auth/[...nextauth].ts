@@ -50,5 +50,6 @@ export default NextAuth({
           return false
         }
       },
-    }
+    },
+    secret: process.env.SIGNING_KEY,
 })
