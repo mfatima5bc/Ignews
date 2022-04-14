@@ -1,9 +1,20 @@
 import Head from 'next/head';
 import { PrismicText, PrismicRichText } from '@prismicio/react'
 import { createClient } from '../../services/prismicio'
+import * as prismicH from '@prismicio/helpers'
 import styles from './styles.module.scss'
 
-export default function Post({ page }) {
+type Post = {
+    slug: string,
+    title: string,
+    summary: string,
+    updatedAt: string
+}
+interface PostsProps {
+    posts: Post[]
+}
+
+export default function Post({ posts }: PostsProps) {
 
     return (
         <>
@@ -12,21 +23,13 @@ export default function Post({ page }) {
             </Head>
             <main className={styles.container}>
                 <div className={styles.posts}>
-                    <a href="">
-                        <time>28 de março de 2022</time>
-                        <strong><PrismicText field={page.data} /></strong>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum possimus excepturi iste sequi accusamus similique placeat commodi pariatur eius assumend.</p>
-                    </a>
-                    <a href="">
-                        <time>28 de março de 2022</time>
-                        <strong>Creating a API with Fastapi and Docker containers</strong>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum possimus excepturi iste sequi accusamus similique placeat commodi pariatur eius assumend.</p>
-                    </a>                
-                    <a href="">
-                        <time>28 de março de 2022</time>
-                        <strong>Creating a API with Fastapi and Docker containers</strong>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum possimus excepturi iste sequi accusamus similique placeat commodi pariatur eius assumend.</p>
-                    </a>
+                    { posts.map(post => (
+                        <a href="" key={post.slug}>
+                            <time>{post.updatedAt}</time>
+                            <strong>{post.title}</strong>
+                            <p>{post.summary}</p>
+                        </a>
+                    )) }
                 </div>
             </main>
         </>
@@ -42,9 +45,23 @@ export async function getStaticProps() {
         pageSize: 100,
         fetch: ['post.title', 'post.content']
     })
-    console.log(JSON.stringify(page, space=2))
+
+    // console.log(JSON.stringify(page, null, 2)) // see result formated
+
+    const posts = page.map(post => {
+        return {
+            slug: post.uid,
+            title: prismicH.asText(post.data.title),
+            summary: post.data.content.find(content => content.type === 'paragraph')?.text ?? '',
+            updatedAt: new Date(post.last_publication_date).toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric'
+            })
+        }
+    })
     // Pass the homepage as prop to our page.
     return {
-      props: { page },
+      props: { posts },
     }
 }
