@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import { PrismicText, PrismicRichText } from '@prismicio/react'
 import { createClient } from '../../services/prismicio'
 import * as prismicH from '@prismicio/helpers'
@@ -24,11 +25,13 @@ export default function Post({ posts }: PostsProps) {
             <main className={styles.container}>
                 <div className={styles.posts}>
                     { posts.map(post => (
-                        <a href="" key={post.slug}>
-                            <time>{post.updatedAt}</time>
-                            <strong>{post.title}</strong>
-                            <p>{post.summary}</p>
-                        </a>
+                        <Link href={`/posts/${post.slug}`} key={post.slug}>
+                            <a>
+                                <time>{post.updatedAt}</time>
+                                <strong>{post.title}</strong>
+                                <p>{post.summary}</p>
+                            </a>
+                        </Link>
                     )) }
                 </div>
             </main>
